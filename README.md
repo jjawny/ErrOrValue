@@ -1,6 +1,6 @@
 # ErrOrResult
 
-My take on _errors as values_ in .NET
+My take on _errors as values_ for ASP.NET Web APIs
 
 ### Example usage
 
