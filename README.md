@@ -12,10 +12,10 @@ My take on _errors as values_ in .NET
   {
     // Happy path
     return res.QuickReturn(
-        value: true,
-        message: $"Successfull op",
-        severity: Severity.Info,
-        code: HttpStatusCode.OK);
+      value: true,
+      message: $"Successfull op",
+      severity: Severity.Info,
+      code: HttpStatusCode.OK);
 
     // Issues
     return res.QuickReturn(
@@ -29,10 +29,10 @@ My take on _errors as values_ in .NET
   {
     // Exceptions
     return res.QuickReturn(
-        message: "Something went wrong...",
-        severity: Severity.Error,
-        code: HttpStatusCode.InternalServerError,
-        ex: ex);
+      message: "Something went wrong...",
+      severity: Severity.Error,
+      code: HttpStatusCode.InternalServerError,
+      ex: ex);
   }
 
 ```
