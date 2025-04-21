@@ -31,7 +31,7 @@ public static class ErrOrHelpers
   {
     if (!string.IsNullOrWhiteSpace(message)) errOr.AddMessage(message, severity);
 
-    bool isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
+    var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
     if (isDevelopment && ex != null)
     {
       var exMessage = ex.InnerException == null ? ex.Message : ex.InnerException.Message;
