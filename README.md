@@ -6,7 +6,7 @@ My take on _errors as values_ in .NET
 
 ```csharp
 
-  var res = new ErrOr<bool>()
+  var res = new ErrOr<bool>();
 
   try
   {
