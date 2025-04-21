@@ -8,23 +8,26 @@ My take on _errors as values_ in .NET
 
   var res = new ErrOr<bool>()
 
-  // Happy path
-  return res.QuickReturn(
-      value: true,
-      message: $"Successfull op",
-      severity: Severity.Info,
-      code: HttpStatusCode.OK);
+  try
+  {
+    // Happy path
+    return res.QuickReturn(
+        value: true,
+        message: $"Successfull op",
+        severity: Severity.Info,
+        code: HttpStatusCode.OK);
 
-  // Issues
-  return res.QuickReturn(
-    value: false,
-    message: $"Issue with op",
-    severity: Severity.Warning,
-    code: HttpStatusCode.NotFound);
+    // Issues
+    return res.QuickReturn(
+      value: false,
+      message: $"Issue with op",
+      severity: Severity.Warning,
+      code: HttpStatusCode.NotFound);
 
-  // Exceptions
+  }
   catch (Exception ex)
   {
+    // Exceptions
     return res.QuickReturn(
         message: "Something went wrong...",
         severity: Severity.Error,
