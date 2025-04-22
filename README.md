@@ -1,8 +1,8 @@
-# ErrOrResult
+# ❌ ErrOrResult
 
-My take on _errors as values_ for ASP.NET Web APIs
+A slim object for _[errors as values](https://go.dev/blog/errors-are-values)_ in ASP.NET
 
-### Example usage
+### Example
 
 ```csharp
 
@@ -36,3 +36,7 @@ My take on _errors as values_ for ASP.NET Web APIs
   }
 
 ```
+
+### Usage
+
+Feel free to copy and paste into your project, add to it, or make it even slimmer!

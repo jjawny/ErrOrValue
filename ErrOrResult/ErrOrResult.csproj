@@ -10,4 +10,16 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.3.0" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <PackageId>ErrOrResult</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Johnny Madigan</Authors>
+    <Description>A slim object for Errors as Values in ASP.NET</Description>
+    <licenses>https://opensource.org/licenses/MIT</licenses>
+    <PackageIcon>ErrOrResult.png</PackageIcon>
+    <PackageTags>Errors,As,Values,For,ASP,Dotnet</PackageTags>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/jjjjony/ErrOrResult</RepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
 </Project>
