@@ -1,4 +1,4 @@
-![ErrOrResult](https://github.com/jjjjony/ErrOrResult/blob/main/ErrOrResult.png)
+![ErrOrResult](ErrOrResult.png)
 
 # ErrOrResult
 
