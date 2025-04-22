@@ -11,11 +11,12 @@
     <Version>1.0.0</Version>
     <Authors>Johnny Madigan</Authors>
     <Description>A slim object for Errors as Values in ASP.NET</Description>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>ErrOrResult.png</PackageIcon>
     <PackageTags>Errors,As,Values,For,ASP,Dotnet</PackageTags>
-    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/jjjjony/ErrOrResult</PackageProjectUrl>
     <RepositoryUrl>https://github.com/jjjjony/ErrOrResult</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
