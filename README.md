@@ -1,4 +1,6 @@
-# <img src="ErrOrResult.png" width="20" alt="ErrOrResult logo" style="border-radius: 5px;"/> ErrOrResult
+![ErrOrResult](ErrOrResult.png)
+
+# ErrOrResult
 
 A slim object for _[errors as values](https://go.dev/blog/errors-are-values)_ in ASP.NET
 
