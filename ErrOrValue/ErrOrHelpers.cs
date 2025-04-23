@@ -8,11 +8,32 @@ namespace ErrOrValue;
 public static class ErrOrHelpers
 {
   /// <summary>
+  /// Get all error messages
+  /// </summary>
+  public static List<string> Errors(this ErrOr errOr)
+  {
+    return errOr.Messages
+      .Where(m => m.Severity == Severity.Error)
+      .Select(m => m.Message)
+      .ToList();
+  }
+
+  /// <summary>
   /// Add a message
   /// </summary>
   public static ErrOr AddMessage(this ErrOr errOr, string message, Severity severity = Severity.Info)
   {
     errOr.Messages.Add((message, severity));
+
+    return errOr;
+  }
+
+  /// <summary>
+  /// Add many messages
+  /// </summary>
+  public static ErrOr AddMessages(this ErrOr errOr, IEnumerable<(string Message, Severity Severity)> messages)
+  {
+    errOr.Messages.AddRange(messages);
 
     return errOr;
   }
@@ -120,8 +141,7 @@ public static class ErrOrHelpers
   /// </summary>
   public static IActionResult ToApiResponse(this ErrOr errOr, object? value = null)
   {
-    // Convert messages from tuples to object with named properties
-    //  to ensure messages are serialized properly when returning as JSON
+    // Convert tuples to named properties for JSON serialization
     var jsonSerializableMessages = errOr.Messages.Select(m => new { message = m.Message, severity = m.Severity.GetEnumDescription() }).ToList();
 
     object body = value != null
