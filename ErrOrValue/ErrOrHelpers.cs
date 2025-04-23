@@ -67,7 +67,7 @@ public static class ErrOrHelpers
   /// <summary>
   /// Set all values at once
   /// </summary>
-  public static ErrOr Set(this ErrOr errOr, string? message = null, Severity severity = Severity.Info, HttpStatusCode code = HttpStatusCode.OK, Exception? ex = null)
+  public static ErrOr Set(this ErrOr errOr, string? message = null, Severity severity = Severity.Info, HttpStatusCode statusCode = HttpStatusCode.OK, Exception? exception = null)
   {
     if (!string.IsNullOrWhiteSpace(message))
     {
@@ -76,17 +76,17 @@ public static class ErrOrHelpers
 
     var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
 
-    if (isDevelopment && ex != null)
+    if (isDevelopment && exception != null)
     {
-      var exMessage = ex.InnerException == null ? ex.Message : ex.InnerException.Message;
+      var exceptionMessage = exception.InnerException == null ? exception.Message : exception.InnerException.Message;
 
-      if (!string.IsNullOrWhiteSpace(exMessage))
+      if (!string.IsNullOrWhiteSpace(exceptionMessage))
       {
-        errOr.AddMessage(exMessage, Severity.Error);
+        errOr.AddMessage(exceptionMessage, Severity.Error);
       }
     }
 
-    errOr.Code = code;
+    errOr.Code = statusCode;
 
     return errOr;
   }
@@ -94,9 +94,9 @@ public static class ErrOrHelpers
   /// <summary>
   /// Set all values at once
   /// </summary>
-  public static ErrOr<T> Set<T>(this ErrOr<T> errOr, T? value = default, string? message = null, Severity severity = Severity.Info, HttpStatusCode code = HttpStatusCode.OK, Exception? ex = null)
+  public static ErrOr<T> Set<T>(this ErrOr<T> errOr, T? value = default, string? message = null, Severity severity = Severity.Info, HttpStatusCode statusCode = HttpStatusCode.OK, Exception? exception = null)
   {
-    errOr.Set(message, severity, code, ex);
+    errOr.Set(message, severity, statusCode, exception);
 
     if (value != null)
     {
