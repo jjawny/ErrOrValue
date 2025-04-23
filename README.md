@@ -15,14 +15,14 @@ A slim object with _[errors as values](https://go.dev/blog/errors-are-values)_ f
     try
     {
       // Happy path
-      return res.QuickReturn(
+      return res.Set(
         value: true,
         message: $"Successfully found it",
         severity: Severity.Info,
         code: HttpStatusCode.OK);
 
       // Issues
-      return res.QuickReturn(
+      return res.Set(
         value: false,
         message: $"Unable to find it",
         severity: Severity.Warning,
@@ -31,7 +31,7 @@ A slim object with _[errors as values](https://go.dev/blog/errors-are-values)_ f
     catch (Exception ex)
     {
       // Exceptions
-      return res.QuickReturn(
+      return res.Set(
         message: "Something went wrong...",
         severity: Severity.Error,
         code: HttpStatusCode.InternalServerError,
@@ -43,6 +43,7 @@ A slim object with _[errors as values](https://go.dev/blog/errors-are-values)_ f
 ```csharp
   // You can safely access the value if everything is okay
   var res = Find();
+
   if (res.IsOk)
   {
     Console.WriteLine(res.Value);
