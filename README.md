@@ -4,7 +4,7 @@
 
 A slim object with _[errors as values](https://go.dev/blog/errors-are-values)_ for ASP.NET projects
 
-### Example
+## Example
 
 ```csharp
   // Some method
@@ -50,6 +50,6 @@ A slim object with _[errors as values](https://go.dev/blog/errors-are-values)_ f
   }
 ```
 
-### Why?
+## Why?
 
 TLDR Most similar packages have overly verbose APIs, less is more, especially when the idea is to use this type everywhere. I even recommend copying this into your project locally rather than using it as a NuGet dependency so you can have full control over it!
