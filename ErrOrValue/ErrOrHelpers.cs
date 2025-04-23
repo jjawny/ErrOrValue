@@ -67,7 +67,7 @@ public static class ErrOrHelpers
   /// <summary>
   /// Set all values at once
   /// </summary>
-  public static ErrOr Set(this ErrOr errOr, string? message = null, Severity severity = Severity.Info, HttpStatusCode statusCode = HttpStatusCode.OK, Exception? exception = null)
+  public static ErrOr Set(this ErrOr errOr, string? message = null, Severity severity = Severity.Info, HttpStatusCode code = HttpStatusCode.OK, Exception? exception = null)
   {
     if (!string.IsNullOrWhiteSpace(message))
     {
@@ -86,7 +86,7 @@ public static class ErrOrHelpers
       }
     }
 
-    errOr.Code = statusCode;
+    errOr.Code = code;
 
     return errOr;
   }
@@ -94,9 +94,9 @@ public static class ErrOrHelpers
   /// <summary>
   /// Set all values at once
   /// </summary>
-  public static ErrOr<T> Set<T>(this ErrOr<T> errOr, T? value = default, string? message = null, Severity severity = Severity.Info, HttpStatusCode statusCode = HttpStatusCode.OK, Exception? exception = null)
+  public static ErrOr<T> Set<T>(this ErrOr<T> errOr, T? value = default, string? message = null, Severity severity = Severity.Info, HttpStatusCode code = HttpStatusCode.OK, Exception? exception = null)
   {
-    errOr.Set(message, severity, statusCode, exception);
+    errOr.Set(message, severity, code, exception);
 
     if (value != null)
     {
