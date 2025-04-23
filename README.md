@@ -1,6 +1,6 @@
 ![ErrOrValue](https://raw.githubusercontent.com/jjjjony/ErrOrValue/main/ErrOrValue.png)
 
-# ErrOrValue ❌✅
+# ErrOrValue ❌ ✅
 
 A slim object with _[errors as values](https://go.dev/blog/errors-are-values)_ for ASP.NET projects
 
