@@ -1,8 +1,8 @@
-![ErrOrResult](https://raw.githubusercontent.com/jjjjony/ErrOrResult/main/ErrOrResult.png)
+![ErrOrValue](https://raw.githubusercontent.com/jjjjony/ErrOrValue/main/ErrOrValue.png)
 
-# ErrOrResult
+# ErrOrValue
 
-A slim object for _[errors as values](https://go.dev/blog/errors-are-values)_ in ASP.NET
+A slim object with _[errors as values](https://go.dev/blog/errors-are-values)_ for ASP.NET projects
 
 ### Example
 
@@ -38,6 +38,10 @@ A slim object for _[errors as values](https://go.dev/blog/errors-are-values)_ in
   }
 
 ```
+
+### Why?
+
+TODO:
 
 ### Usage
 
