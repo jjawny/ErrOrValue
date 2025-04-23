@@ -1,48 +1,54 @@
 ![ErrOrValue](https://raw.githubusercontent.com/jjjjony/ErrOrValue/main/ErrOrValue.png)
 
-# ErrOrValue
+# ErrOrValue ❌✅
 
 A slim object with _[errors as values](https://go.dev/blog/errors-are-values)_ for ASP.NET projects
 
 ### Example
 
 ```csharp
-
-  var res = new ErrOr<bool>();
-
-  try
+  // Some method
+  public ErrOr<bool> Find()
   {
-    // Happy path
-    return res.QuickReturn(
-      value: true,
-      message: $"Successfull op",
-      severity: Severity.Info,
-      code: HttpStatusCode.OK);
+    var res = new ErrOr<bool>();
 
-    // Issues
-    return res.QuickReturn(
-      value: false,
-      message: $"Issue with op",
-      severity: Severity.Warning,
-      code: HttpStatusCode.NotFound);
+    try
+    {
+      // Happy path
+      return res.QuickReturn(
+        value: true,
+        message: $"Successfully found it",
+        severity: Severity.Info,
+        code: HttpStatusCode.OK);
 
+      // Issues
+      return res.QuickReturn(
+        value: false,
+        message: $"Unable to find it",
+        severity: Severity.Warning,
+        code: HttpStatusCode.NotFound);
+    }
+    catch (Exception ex)
+    {
+      // Exceptions
+      return res.QuickReturn(
+        message: "Something went wrong...",
+        severity: Severity.Error,
+        code: HttpStatusCode.InternalServerError,
+        ex: ex);
+    }
   }
-  catch (Exception ex)
+```
+
+```csharp
+  // You can safely access the value if everything is okay
+  var res = Find();
+  if (res.IsOk)
   {
-    // Exceptions
-    return res.QuickReturn(
-      message: "Something went wrong...",
-      severity: Severity.Error,
-      code: HttpStatusCode.InternalServerError,
-      ex: ex);
+    Console.WriteLine(res.Value);
   }
-
 ```
 
 ### Why?
 
-TODO:
-
-### Usage
-
-Feel free to copy and paste into your project, add to it, or make it even slimmer!
+TLDR Most similar packages have overly verbose APIs, less is more, especially when the idea is to use this type everywhere. I even recommend copying this into your project locally rather than using it as a NuGet dependency so you can have full control over it!
