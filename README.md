@@ -17,14 +17,14 @@ A slim object with _[errors as values](https://go.dev/blog/errors-are-values)_ f
       // Happy path
       return res.Set(
         value: true,
-        message: $"Successfully found it",
+        message: "Successfully found it",
         severity: Severity.Info,
         code: HttpStatusCode.OK);
 
       // Issues
       return res.Set(
         value: false,
-        message: $"Unable to find it",
+        message: "Unable to find it",
         severity: Severity.Warning,
         code: HttpStatusCode.NotFound);
     }
