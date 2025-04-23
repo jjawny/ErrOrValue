@@ -124,13 +124,13 @@ public static class ErrOrHelpers
   /// <summary>
   /// Map a HTTP response to an ErrOr 
   /// </summary>
-  public static async Task<ErrOr<T>> FromHttpResponse<T>(this ErrOr<T> errOr, HttpResponseMessage httpRes, string externalServiceName)
+  public static async Task<ErrOr<T>> FromHttpResponse<T>(this ErrOr<T> errOr, HttpResponseMessage httpResponse, string externalServiceName)
   {
-    ((ErrOr)errOr).FromHttpResponse(httpRes, externalServiceName);
+    ((ErrOr)errOr).FromHttpResponse(httpResponse, externalServiceName);
 
-    if (httpRes.Content != null)
+    if (httpResponse.Content != null)
     {
-      errOr.Value = await httpRes.Content.ReadFromJsonAsync<T>();
+      errOr.Value = await httpResponse.Content.ReadFromJsonAsync<T>();
     }
 
     return errOr;
