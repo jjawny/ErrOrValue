@@ -79,6 +79,11 @@ public static class ErrOrHelpers
       errOr.AddMessage(message, severity);
     }
 
+    if (code.HasValue)
+    {
+      errOr.Code = code.Value;
+    }
+
     var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
 
     if (isDevelopment && ex != null)
@@ -89,11 +94,6 @@ public static class ErrOrHelpers
       {
         errOr.AddMessage(exceptionMessage, Severity.Error);
       }
-    }
-
-    if (code.HasValue)
-    {
-      errOr.Code = code.Value;
     }
 
     return errOr;
