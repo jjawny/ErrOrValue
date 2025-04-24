@@ -67,7 +67,12 @@ public static class ErrOrHelpers
   /// <summary>
   /// Set all values at once
   /// </summary>
-  public static ErrOr Set(this ErrOr errOr, string? message = null, Severity severity = Severity.Info, HttpStatusCode code = HttpStatusCode.OK, Exception? ex = null)
+  public static ErrOr Set(
+    this ErrOr errOr,
+    string? message = null,
+    Severity severity = Severity.Info,
+    HttpStatusCode? code = null,
+    Exception? ex = null)
   {
     if (!string.IsNullOrWhiteSpace(message))
     {
@@ -86,7 +91,10 @@ public static class ErrOrHelpers
       }
     }
 
-    errOr.Code = code;
+    if (code.HasValue)
+    {
+      errOr.Code = code.Value;
+    }
 
     return errOr;
   }
@@ -94,7 +102,13 @@ public static class ErrOrHelpers
   /// <summary>
   /// Set all values at once
   /// </summary>
-  public static ErrOr<T> Set<T>(this ErrOr<T> errOr, T? value = default, string? message = null, Severity severity = Severity.Info, HttpStatusCode code = HttpStatusCode.OK, Exception? ex = null)
+  public static ErrOr<T> Set<T>(
+    this ErrOr<T> errOr,
+    T? value = default,
+    string? message = null,
+    Severity severity = Severity.Info,
+    HttpStatusCode? code = null,
+    Exception? ex = null)
   {
     errOr.Set(message, severity, code, ex);
 
@@ -148,9 +162,9 @@ public static class ErrOrHelpers
       ? new { value = value, messages = jsonSerializableMessages }
       : new { messages = jsonSerializableMessages };
 
-    var apiRes = new JsonResult(body) { StatusCode = (int)errOr.Code };
+    var res = new JsonResult(body) { StatusCode = (int)errOr.Code };
 
-    return apiRes;
+    return res;
   }
 
   /// <summary>
