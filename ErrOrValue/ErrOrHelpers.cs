@@ -67,26 +67,34 @@ public static class ErrOrHelpers
   /// <summary>
   /// Set all values at once
   /// </summary>
-  public static ErrOr Set(this ErrOr errOr, string? message = null, Severity severity = Severity.Info, HttpStatusCode code = HttpStatusCode.OK, Exception? ex = null)
+  public static ErrOr Set(
+    this ErrOr errOr,
+    string? message = null,
+    Severity severity = Severity.Info,
+    HttpStatusCode? code = null,
+    Exception? ex = null)
   {
     if (!string.IsNullOrWhiteSpace(message))
     {
       errOr.AddMessage(message, severity);
     }
 
+    if (code.HasValue)
+    {
+      errOr.Code = code.Value;
+    }
+
     var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
 
     if (isDevelopment && ex != null)
     {
-      var exMessage = ex.InnerException == null ? ex.Message : ex.InnerException.Message;
+      var exceptionMessage = ex.InnerException == null ? ex.Message : ex.InnerException.Message;
 
-      if (!string.IsNullOrWhiteSpace(exMessage))
+      if (!string.IsNullOrWhiteSpace(exceptionMessage))
       {
-        errOr.AddMessage(exMessage, Severity.Error);
+        errOr.AddMessage(exceptionMessage, Severity.Error);
       }
     }
-
-    errOr.Code = code;
 
     return errOr;
   }
@@ -94,7 +102,13 @@ public static class ErrOrHelpers
   /// <summary>
   /// Set all values at once
   /// </summary>
-  public static ErrOr<T> Set<T>(this ErrOr<T> errOr, T? value = default, string? message = null, Severity severity = Severity.Info, HttpStatusCode code = HttpStatusCode.OK, Exception? ex = null)
+  public static ErrOr<T> Set<T>(
+    this ErrOr<T> errOr,
+    T? value = default,
+    string? message = null,
+    Severity severity = Severity.Info,
+    HttpStatusCode? code = null,
+    Exception? ex = null)
   {
     errOr.Set(message, severity, code, ex);
 
@@ -124,13 +138,13 @@ public static class ErrOrHelpers
   /// <summary>
   /// Map a HTTP response to an ErrOr 
   /// </summary>
-  public static async Task<ErrOr<T>> FromHttpResponse<T>(this ErrOr<T> errOr, HttpResponseMessage httpRes, string externalServiceName)
+  public static async Task<ErrOr<T>> FromHttpResponse<T>(this ErrOr<T> errOr, HttpResponseMessage httpResponse, string externalServiceName)
   {
-    ((ErrOr)errOr).FromHttpResponse(httpRes, externalServiceName);
+    ((ErrOr)errOr).FromHttpResponse(httpResponse, externalServiceName);
 
-    if (httpRes.Content != null)
+    if (httpResponse.Content != null)
     {
-      errOr.Value = await httpRes.Content.ReadFromJsonAsync<T>();
+      errOr.Value = await httpResponse.Content.ReadFromJsonAsync<T>();
     }
 
     return errOr;
@@ -148,9 +162,9 @@ public static class ErrOrHelpers
       ? new { value = value, messages = jsonSerializableMessages }
       : new { messages = jsonSerializableMessages };
 
-    var apiRes = new JsonResult(body) { StatusCode = (int)errOr.Code };
+    var res = new JsonResult(body) { StatusCode = (int)errOr.Code };
 
-    return apiRes;
+    return res;
   }
 
   /// <summary>

@@ -1,10 +1,10 @@
 ![ErrOrValue](https://raw.githubusercontent.com/jjjjony/ErrOrValue/main/ErrOrValue.png)
 
-# ErrOrValue ❌✅
+# ErrOrValue ❌ ✅
 
 A slim object with _[errors as values](https://go.dev/blog/errors-are-values)_ for ASP.NET projects
 
-### Example
+## Example
 
 ```csharp
   // Some method
@@ -17,14 +17,14 @@ A slim object with _[errors as values](https://go.dev/blog/errors-are-values)_ f
       // Happy path
       return res.Set(
         value: true,
-        message: $"Successfully found it",
+        message: "Successfully found it",
         severity: Severity.Info,
         code: HttpStatusCode.OK);
 
       // Issues
       return res.Set(
         value: false,
-        message: $"Unable to find it",
+        message: "Unable to find it",
         severity: Severity.Warning,
         code: HttpStatusCode.NotFound);
     }
@@ -50,6 +50,6 @@ A slim object with _[errors as values](https://go.dev/blog/errors-are-values)_ f
   }
 ```
 
-### Why?
+## Why?
 
 TLDR Most similar packages have overly verbose APIs, less is more, especially when the idea is to use this type everywhere. I even recommend copying this into your project locally rather than using it as a NuGet dependency so you can have full control over it!
