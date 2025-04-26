@@ -65,6 +65,15 @@ public static class ErrOrHelpers
   }
 
   /// <summary>
+  /// Merge the Status Code and Messages from another ErrOr into this ErrOr
+  /// </summary>
+  public static ErrOr<TTarget> MergeWith<TTarget, TSource>(this ErrOr<TTarget> errOr, ErrOr<TSource> otherErrOr)
+  {
+    ((ErrOr)errOr).MergeWith(otherErrOr);
+    return errOr;
+  }
+
+  /// <summary>
   /// Set all values at once
   /// </summary>
   public static ErrOr Set(
