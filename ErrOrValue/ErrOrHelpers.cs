@@ -1,7 +1,5 @@
-using System.ComponentModel;
 using System.Net;
 using System.Net.Http.Json;
-using Microsoft.AspNetCore.Mvc;
 
 namespace ErrOrValue;
 
@@ -160,26 +158,34 @@ public static class ErrOrHelpers
   }
 
   /// <summary>
-  /// Map an ErrOr to a HTTP response 
+  /// Map an ErrOr to an HTTP response for MVC controllers
   /// </summary>
-  public static IActionResult ToApiResponse(this ErrOr errOr, object? value = null)
+  public static Microsoft.AspNetCore.Mvc.IActionResult ToApiResponse(this ErrOr errOr, object? value = null)
   {
-    // Convert tuples to named properties for JSON serialization
-    var jsonSerializableMessages = errOr.Messages.Select(m => new { message = m.Message, severity = m.Severity.GetEnumDescription() }).ToList();
-
-    object body = value != null
-      ? new { value = value, messages = jsonSerializableMessages }
-      : new { messages = jsonSerializableMessages };
-
-    var res = new JsonResult(body) { StatusCode = (int)errOr.Code };
-
+    var body = GetApiResponsePayload(errOr, value);
+    var res = new Microsoft.AspNetCore.Mvc.JsonResult(body) { StatusCode = (int)errOr.Code };
     return res;
   }
 
   /// <summary>
-  /// Map an ErrOr to a HTTP response 
+  /// Map an ErrOr to an HTTP response for MVC controllers
   /// </summary>
-  public static IActionResult ToApiResponse<T>(this ErrOr<T> errOr) => errOr.ToApiResponse(errOr.Value);
+  public static Microsoft.AspNetCore.Mvc.IActionResult ToApiResponse<T>(this ErrOr<T> errOr) => errOr.ToApiResponse(errOr.Value);
+
+  /// <summary>
+  /// Map an ErrOr to an HTTP response for minimal APIs
+  /// </summary>
+  public static Microsoft.AspNetCore.Http.IResult ToMinimalApiResponse(this ErrOr errOr, object? value = null)
+  {
+    var body = GetApiResponsePayload(errOr, value);
+    var res = Microsoft.AspNetCore.Http.Results.Json(body, statusCode: (int)errOr.Code);
+    return res;
+  }
+
+  /// <summary>
+  /// Map an ErrOr to an HTTP response for minimal APIs
+  /// </summary>
+  public static Microsoft.AspNetCore.Http.IResult ToMinimalApiResponse<T>(this ErrOr<T> errOr) => errOr.ToMinimalApiResponse(errOr.Value);
 
   /// <summary>
   /// Get the description attribute of an enum value or fallback to the enum as a string
@@ -188,11 +194,24 @@ public static class ErrOrHelpers
   {
     var field = enumValue.GetType().GetField(enumValue.ToString());
 
-    if (field != null && Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) is DescriptionAttribute attribute)
+    if (field != null && Attribute.GetCustomAttribute(field, typeof(System.ComponentModel.DescriptionAttribute)) is System.ComponentModel.DescriptionAttribute attribute)
     {
       return attribute.Description;
     }
 
     return enumValue.ToString();
+  }
+
+  /// <summary>
+  /// Creates a standardized response payload from an ErrOr
+  /// </summary>
+  private static object GetApiResponsePayload(ErrOr errOr, object? value = null)
+  {
+    // Convert tuples to named properties for JSON serialization
+    var jsonSerializableMessages = errOr.Messages.Select(m => new { message = m.Message, severity = m.Severity.GetEnumDescription() }).ToList();
+
+    return value != null
+      ? new { value = value, messages = jsonSerializableMessages }
+      : new { messages = jsonSerializableMessages };
   }
 }
