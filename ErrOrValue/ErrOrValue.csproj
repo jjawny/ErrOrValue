@@ -8,7 +8,7 @@
 
   <PropertyGroup>
     <PackageId>ErrOrValue</PackageId>
-    <Version>3.1.0</Version>
+    <Version>3.2.0</Version>
     <Authors>Johnny Madigan</Authors>
     <Description>A slim object with errors as values for ASP.NET projects</Description>
     <PackageIcon>ErrOrValue.png</PackageIcon>
@@ -19,13 +19,13 @@
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.3.0" />
-  </ItemGroup>
   
   <ItemGroup>
     <None Include="../ErrOrValue.png" Pack="true" PackagePath="" />
     <None Include="../README.md" Pack="true" PackagePath="" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 </Project>
