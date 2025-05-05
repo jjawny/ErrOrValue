@@ -48,26 +48,19 @@ public static class ErrOrHelpers
   }
 
   /// <summary>
-  /// Merge the Status Code, Messages, and Value from another ErrOr into this ErrOr
-  /// </summary>
-  public static ErrOr<T> MergeWith<T>(this ErrOr<T> errOr, ErrOr<T> otherErrOr)
-  {
-    ((ErrOr)errOr).MergeWith(otherErrOr);
-
-    if (otherErrOr.Value != null)
-    {
-      errOr.Value = otherErrOr.Value;
-    }
-
-    return errOr;
-  }
-
-  /// <summary>
-  /// Merge the Status Code and Messages from another ErrOr into this ErrOr
+  /// Merge the Status Code, Messages, and Value (if types match) from another ErrOr into this ErrOr
   /// </summary>
   public static ErrOr<TTarget> MergeWith<TTarget, TSource>(this ErrOr<TTarget> errOr, ErrOr<TSource> otherErrOr)
   {
+    // Merge base properties
     ((ErrOr)errOr).MergeWith(otherErrOr);
+
+    // If the types match, try to update the value
+    if (otherErrOr is ErrOr<TTarget> sameTypeErrOr && sameTypeErrOr.Value != null)
+    {
+      errOr.Value = sameTypeErrOr.Value;
+    }
+
     return errOr;
   }
 
