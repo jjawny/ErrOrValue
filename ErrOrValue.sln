@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ErrOrValue", "ErrOrValue\ErrOrValue.csproj", "{DC8DF832-1E40-439F-9DCF-22BC2B812771}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ErrOrValue.Tests", "ErrOrValue.Tests\ErrOrValue.Tests.csproj", "{53E486AB-0027-468C-B11E-4705596F6A94}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{DC8DF832-1E40-439F-9DCF-22BC2B812771}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC8DF832-1E40-439F-9DCF-22BC2B812771}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC8DF832-1E40-439F-9DCF-22BC2B812771}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53E486AB-0027-468C-B11E-4705596F6A94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53E486AB-0027-468C-B11E-4705596F6A94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53E486AB-0027-468C-B11E-4705596F6A94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53E486AB-0027-468C-B11E-4705596F6A94}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
