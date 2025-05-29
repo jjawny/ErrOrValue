@@ -6,9 +6,9 @@ namespace ErrOrValue.Tests;
 public class AddMessagesTests
 {
   [Theory]
-  [InlineData("Test message", Severity.Info)]
-  [InlineData("Error occurred", Severity.Error)]
-  [InlineData("Warning notice", Severity.Warning)]
+  [InlineData("Info message", Severity.Info)]
+  [InlineData("Error message", Severity.Error)]
+  [InlineData("Warning message", Severity.Warning)]
   public void AddMessage_Success(string message, Severity severity)
   {
     // Arrange
