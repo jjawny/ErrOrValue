@@ -9,7 +9,7 @@ public class AddMessagesTests
   [InlineData("Info message", Severity.Info)]
   [InlineData("Error message", Severity.Error)]
   [InlineData("Warning message", Severity.Warning)]
-  public void AddMessage_Success(string message, Severity severity)
+  public void AddMessages(string message, Severity severity)
   {
     // Arrange
     var errOr = new ErrOr();
@@ -24,7 +24,7 @@ public class AddMessagesTests
   }
 
   [Fact]
-  public void DefaultMessageSeverityIsInfo_Success()
+  public void AddMessages_WithDefaultSeverity()
   {
     // Arrange
     var errOr = new ErrOr();
@@ -37,7 +37,7 @@ public class AddMessagesTests
   }
 
   [Fact]
-  public void AddMultipleMessages_Success()
+  public void AddMessages_BulkAdd()
   {
     // Arrange
     var errOr = new ErrOr();

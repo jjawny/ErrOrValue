@@ -5,7 +5,7 @@ namespace ErrOrValue.Tests;
 public class ErrorTests
 {
   [Fact]
-  public void GetErrorMessagesOnly_Success()
+  public void Error_GetErrorMessagesOnly()
   {
     // Arrange
     var errOr = new ErrOr();
