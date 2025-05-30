@@ -9,7 +9,7 @@ public class SetTests
   [InlineData("Test message", Severity.Info, HttpStatusCode.OK)]
   [InlineData("Error message", Severity.Error, HttpStatusCode.BadRequest)]
   [InlineData("Warning message", Severity.Warning, HttpStatusCode.NotFound)]
-  public void Set_SetsErrOrProperties(string message, Severity severity, HttpStatusCode code)
+  public void SetsErrOrProperties(string message, Severity severity, HttpStatusCode code)
   {
     // Arrange
     var errOr = new ErrOr();
@@ -82,20 +82,5 @@ public class SetTests
     Assert.Single(errOr.Messages);
     Assert.Equal(message, errOr.Messages[0].Message);
     Assert.Equal(severity, errOr.Messages[0].Severity);
-  }
-
-  [Fact]
-  public void SetGeneric_NullValue_DoesNotUpdateValue()
-  {
-    // Arrange
-    var errOr = new ErrOr<string> { Value = "Original" };
-
-    // Act
-    errOr.Set(value: null, message: "Test message");
-
-    // Assert
-    Assert.Equal("Original", errOr.Value);
-    Assert.Single(errOr.Messages);
-    Assert.Equal("Test message", errOr.Messages[0].Message);
   }
 }

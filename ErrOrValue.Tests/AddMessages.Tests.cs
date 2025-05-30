@@ -24,7 +24,7 @@ public class AddMessagesTests
   }
 
   [Fact]
-  public void AddMessages_WithDefaultSeverity()
+  public void AddMessageWithDefaultSeverity()
   {
     // Arrange
     var errOr = new ErrOr();
@@ -37,7 +37,7 @@ public class AddMessagesTests
   }
 
   [Fact]
-  public void AddMessages_BulkAdd()
+  public void AddManyMessages()
   {
     // Arrange
     var errOr = new ErrOr();

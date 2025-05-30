@@ -6,7 +6,7 @@ namespace ErrOrValue.Tests;
 public class MergeWithTests
 {
   [Fact]
-  public void MergeWith_MergesStatusCodeAndMessages()
+  public void MergeStatusCodeAndMessages()
   {
     // Arrange
     var errOr1 = new ErrOr { Code = HttpStatusCode.OK };
@@ -24,7 +24,7 @@ public class MergeWithTests
   }
 
   [Fact]
-  public void MergeWith_MergesValueOfSameType()
+  public void MergeValueOfSameType()
   {
     // Arrange
     var errOr1 = new ErrOr<string> { Value = "OriginalValue" };
@@ -38,7 +38,7 @@ public class MergeWithTests
   }
 
   [Fact]
-  public void MergeWith_IgnoresMergingValueOfSameTypeButNotYetSet()
+  public void IgnoreMergingValuesOfSameTypeButNotSetYet()
   {
     // Arrange
     var errOr1 = new ErrOr<string> { Value = "Original" };
@@ -52,7 +52,7 @@ public class MergeWithTests
   }
 
   [Fact]
-  public void MergeWith_IgnoresMergineValuesOfDifferentTypes()
+  public void IgnoreMergingValuesOfDifferentTypes()
   {
     // Arrange
     var errOr1 = new ErrOr<int> { Value = 1 };

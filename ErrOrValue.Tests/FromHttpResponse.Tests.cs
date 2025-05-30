@@ -12,7 +12,7 @@ public class FromHttpResponseTests
   [InlineData(HttpStatusCode.OK, "Service is healthy")]
   [InlineData(HttpStatusCode.BadRequest, "Bad DTO shape")]
   [InlineData(HttpStatusCode.NotFound, "Resource not found")]
-  public void FromHttpResponse_TransfersCodeFromHttpResponse(HttpStatusCode statusCode, string reasonPhrase)
+  public void TransfersHttpResponseCode(HttpStatusCode statusCode, string reasonPhrase)
   {
     // Arrange
     var errOr = new ErrOr();
@@ -40,7 +40,7 @@ public class FromHttpResponseTests
   }
 
   [Fact]
-  public async Task FromHttpResponse_TransfersJsonContentFromHttpResponse()
+  public async Task TransfersHttpResponseJsonBody()
   {
     // Arrange
     var errOr = new ErrOr<ExampleValueFromHttpResponse>();
