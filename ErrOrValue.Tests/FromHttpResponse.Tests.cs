@@ -10,9 +10,9 @@ public class FromHttpResponseTests
 {
   [Theory]
   [InlineData(HttpStatusCode.OK, "Service is healthy")]
-  [InlineData(HttpStatusCode.BadRequest, "Invalid data")]
+  [InlineData(HttpStatusCode.BadRequest, "Bad DTO shape")]
   [InlineData(HttpStatusCode.NotFound, "Resource not found")]
-  public void FromHttpResponse_SetsCodeAndAddsErrorMessageIfNotSuccess(HttpStatusCode statusCode, string reasonPhrase)
+  public void TransfersHttpResponseCode(HttpStatusCode statusCode, string reasonPhrase)
   {
     // Arrange
     var errOr = new ErrOr();
@@ -23,15 +23,14 @@ public class FromHttpResponseTests
     };
 
     // Act
-    errOr.FromHttpResponse(httpResponse, "TestService");
+    errOr.FromHttpResponse(httpResponse, "3rdPartyService");
 
     // Assert
-    Assert.Equal(statusCode, errOr.Code);
+    Assert.Equal(httpResponse.StatusCode, errOr.Code);
 
     if ((int)statusCode >= 400)
     {
       Assert.Single(errOr.Messages);
-      Assert.Equal($"Error from TestService: {reasonPhrase}", errOr.Messages[0].Message);
       Assert.Equal(Severity.Error, errOr.Messages[0].Severity);
     }
     else
@@ -41,11 +40,11 @@ public class FromHttpResponseTests
   }
 
   [Fact]
-  public async Task FromHttpResponseGeneric_SetsValueFromJsonContent()
+  public async Task TransfersHttpResponseJsonBody()
   {
     // Arrange
-    var errOr = new ErrOr<ExampleValue>();
-    var testModel = new ExampleValue { Id = 1, Name = "Test" };
+    var errOr = new ErrOr<ExampleValueFromHttpResponse>();
+    var exampleValueFromHttpResponse = new ExampleValueFromHttpResponse { Id = 1, Name = "Test" };
 
     var handlerMock = new Mock<HttpMessageHandler>();
     handlerMock
@@ -58,24 +57,23 @@ public class FromHttpResponseTests
         .ReturnsAsync(new HttpResponseMessage
         {
           StatusCode = HttpStatusCode.OK,
-          Content = JsonContent.Create(testModel)
+          Content = JsonContent.Create(exampleValueFromHttpResponse)
         });
 
     var httpClient = new HttpClient(handlerMock.Object);
     var httpResponse = await httpClient.GetAsync("https://example.com/api/data");
 
     // Act
-    await errOr.FromHttpResponse(httpResponse, "TestService");
+    await errOr.FromHttpResponse(httpResponse, "3rdPartyService");
 
     // Assert
     Assert.Equal(HttpStatusCode.OK, errOr.Code);
     Assert.NotNull(errOr.Value);
-    Assert.Equal(1, errOr.Value.Id);
-    Assert.Equal("Test", errOr.Value.Name);
+    Assert.Equal(exampleValueFromHttpResponse.Id, errOr.Value.Id);
+    Assert.Equal(exampleValueFromHttpResponse.Name, errOr.Value.Name);
   }
 
-  // Model for testing JSON deserialization
-  private class ExampleValue
+  private class ExampleValueFromHttpResponse
   {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;

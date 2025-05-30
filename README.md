@@ -10,19 +10,19 @@ A slim object with _[errors as values](https://go.dev/blog/errors-are-values)_ f
   // Some method
   public ErrOr<bool> Find()
   {
-    var res = new ErrOr<bool>();
+    var response = new ErrOr<bool>();
 
     try
     {
       // Happy path
-      return res.Set(
+      return response.Set(
         value: true,
         message: "Successfully found it",
         severity: Severity.Info,
         code: HttpStatusCode.OK);
 
       // Issues
-      return res.Set(
+      return response.Set(
         value: false,
         message: "Unable to find it",
         severity: Severity.Warning,
@@ -31,7 +31,7 @@ A slim object with _[errors as values](https://go.dev/blog/errors-are-values)_ f
     catch (Exception ex)
     {
       // Exceptions
-      return res.Set(
+      return response.Set(
         message: "Something went wrong...",
         severity: Severity.Error,
         code: HttpStatusCode.InternalServerError,
@@ -41,12 +41,12 @@ A slim object with _[errors as values](https://go.dev/blog/errors-are-values)_ f
 ```
 
 ```csharp
-  // You can safely access the value if everything is okay
-  var res = Find();
+  // You can safely access the value if everything is OK
+  var response = Find();
 
-  if (res.IsOk)
+  if (response.IsOk)
   {
-    Console.WriteLine(res.Value);
+    Console.WriteLine(response.Value);
   }
 ```
 

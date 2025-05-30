@@ -4,9 +4,6 @@ using Xunit;
 
 namespace ErrOrValue.Tests;
 
-/// <summary>
-/// TODO: Improve Testing outside of an ASP.NET Web API
-/// </summary>
 public class ToApiResponseTests
 {
   [Theory]
