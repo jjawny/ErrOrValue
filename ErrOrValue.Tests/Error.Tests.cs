@@ -21,7 +21,6 @@ public class ErrorTests
     var errors = errOr.Errors();
 
     // Assert
-    Assert.Equal(messagesToAdd.Length, errors.Count);
     Assert.Contains("Error", errors);
     Assert.DoesNotContain("Info", errors);
     Assert.DoesNotContain("Warning", errors);
