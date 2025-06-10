@@ -206,12 +206,35 @@ public static class ErrOrHelpers
   /// </summary>
   public static void LogToConsole(this ErrOr errOr)
   {
-    var json = JsonSerializer.Serialize(new
+    BaseLogToConsole(errOr, null);
+  }
+
+  /// <summary>
+  /// Debug utility to log an ErrOr as JSON to the console
+  /// </summary>
+  public static void LogToConsole<T>(this ErrOr<T> errOr)
+  {
+    BaseLogToConsole(errOr, errOr.Value);
+  }
+
+  /// <summary>
+  /// Internal helper method to log an ErrOr as JSON to the console
+  /// </summary>
+  private static void BaseLogToConsole(ErrOr errOr, object? value)
+  {
+    var prettierObject = new Dictionary<string, object>
     {
-      IsOk = errOr.IsOk,
-      Code = errOr.Code,
-      Messages = errOr.Messages.Select(m => new { Message = m.Message, Severity = m.Severity.GetEnumDescription() }).ToList()
-    }, new JsonSerializerOptions() { WriteIndented = true });
+      ["IsOk"] = errOr.IsOk,
+      ["Code"] = errOr.Code,
+      ["Messages"] = errOr.Messages.Select(m => new { Message = m.Message, Severity = m.Severity.GetEnumDescription() }).ToList()
+    };
+
+    if (value != null)
+    {
+      prettierObject["Value"] = value;
+    }
+
+    var json = JsonSerializer.Serialize(prettierObject, new JsonSerializerOptions() { WriteIndented = true });
 
     Console.WriteLine(json);
   }

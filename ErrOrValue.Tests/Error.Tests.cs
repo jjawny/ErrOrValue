@@ -25,4 +25,19 @@ public class ErrorTests
     Assert.DoesNotContain("Info", errors);
     Assert.DoesNotContain("Warning", errors);
   }
+
+  [Fact]
+  public void GetValue()
+  {
+    // Arrange
+    var errOr = new ErrOr<string>();
+    var testValue = "Test Value";
+
+    // Act
+    errOr.Value = testValue;
+
+    // Assert
+    Assert.NotNull(errOr.Value);
+    Assert.Equal(testValue, errOr.Value);
+  }
 }
