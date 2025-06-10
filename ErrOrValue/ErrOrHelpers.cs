@@ -204,7 +204,7 @@ public static class ErrOrHelpers
   /// <summary>
   /// Debug utility to log an ErrOr as JSON to the console
   /// </summary>
-  public static void DEBUG_LogToConsole(ErrOr errOr)
+  public static void LogToConsole(this ErrOr errOr)
   {
     var json = JsonSerializer.Serialize(new
     {
