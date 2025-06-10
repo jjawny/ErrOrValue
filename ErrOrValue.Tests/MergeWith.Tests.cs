@@ -6,62 +6,103 @@ namespace ErrOrValue.Tests;
 public class MergeWithTests
 {
   [Fact]
-  public void MergeStatusCodeAndMessages()
+  public void MergeBothNonGeneric()
   {
     // Arrange
-    var errOr1 = new ErrOr { Code = HttpStatusCode.OK };
-    errOr1.AddMessage("Message 1", Severity.Info);
-
-    var errOr2 = new ErrOr { Code = HttpStatusCode.BadRequest };
-    errOr2.AddMessage("Message 2", Severity.Error);
+    var errOr = new ErrOr();
+    var otherErrOr = new ErrOr { Code = HttpStatusCode.BadRequest };
+    otherErrOr.AddMessage("Some message", Severity.Info);
 
     // Act
-    errOr1.MergeWith(errOr2);
+    errOr.MergeWith(otherErrOr);
 
     // Assert
-    Assert.Equal(HttpStatusCode.BadRequest, errOr1.Code);
-    Assert.Equal(2, errOr1.Messages.Count);
+    Assert.Equal(otherErrOr.Code, errOr.Code);
+    Assert.Single(errOr.Messages);
   }
 
   [Fact]
-  public void MergeValueOfSameType()
+  public void MergeBothGeneric()
   {
     // Arrange
-    var errOr1 = new ErrOr<string> { Value = "OriginalValue" };
-    var errOr2 = new ErrOr<string> { Value = "UpdatedValue" };
+    var errOr = new ErrOr<string> { Value = "OriginalValue" };
+    var otherErrOr = new ErrOr<string> { Value = "UpdatedValue", Code = HttpStatusCode.BadRequest };
+    otherErrOr.AddMessage("Some message", Severity.Info);
 
     // Act
-    errOr1.MergeWith(errOr2);
+    errOr.MergeWith(otherErrOr);
 
     // Assert
-    Assert.Equal(errOr2.Value, errOr1.Value);
+    Assert.Equal(otherErrOr.Value, errOr.Value);
+    Assert.Equal(otherErrOr.Code, errOr.Code);
+    Assert.Single(errOr.Messages);
   }
 
   [Fact]
-  public void IgnoreMergingValuesOfSameTypeButNotSetYet()
+  public void MergeBothGenericButValueNotSetYet()
   {
     // Arrange
-    var errOr1 = new ErrOr<string> { Value = "Original" };
-    var errOr2 = new ErrOr<string> { Value = null }; // value not set yet
+    var errOr = new ErrOr<string> { Value = "Original" };
+    var otherErrOr = new ErrOr<string> { Value = null, Code = HttpStatusCode.BadRequest }; // value not set yet
+    otherErrOr.AddMessage("Some message", Severity.Info);
 
     // Act
-    errOr1.MergeWith(errOr2);
+    errOr.MergeWith(otherErrOr);
 
     // Assert
-    Assert.NotNull(errOr1.Value);
+    Assert.NotNull(errOr.Value);
+    Assert.Equal(otherErrOr.Code, errOr.Code);
+    Assert.Single(errOr.Messages);
   }
 
   [Fact]
-  public void IgnoreMergingValuesOfDifferentTypes()
+  public void MergeBothGenericButDifferentTypes()
   {
     // Arrange
-    var errOr1 = new ErrOr<int> { Value = 1 };
-    var errOr2 = new ErrOr<string> { Value = "One" };
+    var errOr = new ErrOr<int> { Value = 1 };
+    var otherErrOr = new ErrOr<string> { Value = "one", Code = HttpStatusCode.BadRequest };
+    otherErrOr.AddMessage("Some message", Severity.Info);
 
     // Act
-    errOr1.MergeWith(errOr2);
+    errOr.MergeWith(otherErrOr);
 
     // Assert
-    Assert.Equal(1, errOr1.Value);
+    Assert.Equal(1, errOr.Value);
+    Assert.Equal(otherErrOr.Code, errOr.Code);
+    Assert.Single(errOr.Messages);
+  }
+
+  [Fact]
+  public void MergeGenericWithNonGeneric()
+  {
+    // Arrange
+    var errOr = new ErrOr();
+    var otherErrOr = new ErrOr<string> { Value = "one", Code = HttpStatusCode.BadRequest };
+    otherErrOr.AddMessage("Some message", Severity.Info);
+
+    // Act
+    var result = errOr.MergeWith(otherErrOr);
+
+    // Assert
+    Assert.IsType<ErrOr>(result);
+    Assert.Equal(otherErrOr.Code, result.Code);
+    Assert.Single(errOr.Messages);
+  }
+
+  [Fact]
+  public void MergeNonGenericWithGeneric()
+  {
+    // Arrange
+    var errOr = new ErrOr<int> { Value = 1 };
+    var otherErrOr = new ErrOr { Code = HttpStatusCode.BadRequest };
+    otherErrOr.AddMessage("Some message", Severity.Info);
+
+    // Act
+    var result = errOr.MergeWith(otherErrOr);
+
+    // Assert
+    Assert.IsType<ErrOr<int>>(result);
+    Assert.Equal(otherErrOr.Code, result.Code);
+    Assert.Single(errOr.Messages);
   }
 }

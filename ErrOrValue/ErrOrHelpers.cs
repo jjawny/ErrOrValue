@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace ErrOrValue;
 
@@ -61,6 +62,26 @@ public static class ErrOrHelpers
       errOr.Value = sameTypeErrOr.Value;
     }
 
+    return errOr;
+  }
+
+  /// <summary>
+  /// Merge the Status Code, Messages from another ErrOr into this ErrOr
+  /// </summary>
+  public static ErrOr MergeWith<TSource>(this ErrOr errOr, ErrOr<TSource> otherErrOr)
+  {
+    errOr.Code = otherErrOr.Code;
+    errOr.Messages.AddRange(otherErrOr.Messages);
+    return errOr;
+  }
+
+  /// <summary>
+  /// Merge the Status Code, Messages from another ErrOr into this ErrOr
+  /// </summary>
+  public static ErrOr<TTarget> MergeWith<TTarget>(this ErrOr<TTarget> errOr, ErrOr otherErrOr)
+  {
+    // Merge base properties
+    ((ErrOr)errOr).MergeWith(otherErrOr);
     return errOr;
   }
 
@@ -179,6 +200,21 @@ public static class ErrOrHelpers
   /// Map an ErrOr to an HTTP response for minimal APIs
   /// </summary>
   public static Microsoft.AspNetCore.Http.IResult ToMinimalApiResponse<T>(this ErrOr<T> errOr) => errOr.ToMinimalApiResponse(errOr.Value);
+
+  /// <summary>
+  /// Debug utility to log an ErrOr as JSON to the console
+  /// </summary>
+  public static void DEBUG_LogToConsole(ErrOr errOr)
+  {
+    var json = JsonSerializer.Serialize(new
+    {
+      IsOk = errOr.IsOk,
+      Code = errOr.Code,
+      Messages = errOr.Messages.Select(m => new { Message = m.Message, Severity = m.Severity.GetEnumDescription() }).ToList()
+    }, new JsonSerializerOptions() { WriteIndented = true });
+
+    Console.WriteLine($"RESPONSE:\n {json}");
+  }
 
   /// <summary>
   /// Get the description attribute of an enum value or fallback to the enum as a string
