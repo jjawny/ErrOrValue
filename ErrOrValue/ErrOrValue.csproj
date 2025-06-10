@@ -8,11 +8,11 @@
 
   <PropertyGroup>
     <PackageId>ErrOrValue</PackageId>
-    <Version>3.2.1</Version>
+    <Version>3.3.0</Version>
     <Authors>Johnny Madigan</Authors>
     <Description>A slim object with errors as values for ASP.NET projects</Description>
     <PackageIcon>ErrOrValue.png</PackageIcon>
-    <PackageTags>Slim,Thin,Object,Error,Errors,Value,Values,For,ASP,Dotnet</PackageTags>
+    <PackageTags>Slim,Thin,Object,Error,Errors,Value,Values,For,ASP,DotNet,Skinny</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/jjjjony/ErrOrValue</PackageProjectUrl>
     <RepositoryUrl>https://github.com/jjjjony/ErrOrValue</RepositoryUrl>
