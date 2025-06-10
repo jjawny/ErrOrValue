@@ -213,7 +213,7 @@ public static class ErrOrHelpers
       Messages = errOr.Messages.Select(m => new { Message = m.Message, Severity = m.Severity.GetEnumDescription() }).ToList()
     }, new JsonSerializerOptions() { WriteIndented = true });
 
-    Console.WriteLine($"RESPONSE:\n {json}");
+    Console.WriteLine(json);
   }
 
   /// <summary>
