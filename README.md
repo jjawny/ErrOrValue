@@ -4,7 +4,7 @@
 
 The best _[Errors as Values](https://go.dev/blog/errors-are-values)_ for ASP.NET projects
 
-## Example
+## Show me an example?
 
 ```csharp
   // Some method
@@ -16,17 +16,17 @@ The best _[Errors as Values](https://go.dev/blog/errors-are-values)_ for ASP.NET
     {
       // Happy path
       return response.Set(
-        value: true,
         message: "Successfully found it",
         severity: Severity.Info,
-        code: HttpStatusCode.OK);
+        code: HttpStatusCode.OK,
+        value: true);
 
       // Issues
       return response.Set(
-        value: false,
         message: "Unable to find it",
         severity: Severity.Warning,
-        code: HttpStatusCode.NotFound);
+        code: HttpStatusCode.NotFound,
+        value: false);
     }
     catch (Exception ex)
     {
