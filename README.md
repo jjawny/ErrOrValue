@@ -2,7 +2,7 @@
 
 # ErrOrValue ❌ ✅
 
-A slim object with _[errors as values](https://go.dev/blog/errors-are-values)_ for ASP.NET projects
+The best _[Errors as Values](https://go.dev/blog/errors-are-values)_ for ASP.NET projects
 
 ## Example
 
