@@ -2,7 +2,7 @@
 
 # ErrOrValue ❌ ✅
 
-The best _[Errors as Values](https://go.dev/blog/errors-are-values)_ for ASP.NET projects
+The Best _[Errors as Values](https://go.dev/blog/errors-are-values)_ for ASP.NET Projects
 
 ## Show me an example?
 
@@ -41,12 +41,15 @@ The best _[Errors as Values](https://go.dev/blog/errors-are-values)_ for ASP.NET
 ```
 
 ```csharp
-  // You can now safely access the value if everything is OK
   var response = Find();
 
   if (response.IsOk)
   {
-    Console.WriteLine(response.Value);
+    // You can safely read the value if everything was OK...
+    Console.Write(response.Value);
+  } else {
+    // ...and see any errors
+    Console.Write(response.Errors())
   }
 ```
 
