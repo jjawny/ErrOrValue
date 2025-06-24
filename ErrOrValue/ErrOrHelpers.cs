@@ -79,15 +79,12 @@ public static class ErrOrHelpers
   /// </summary>
   public static ErrOr Set(
     this ErrOr errOr,
-    string? message = null,
-    Severity severity = Severity.Info,
+    string message,
+    Severity severity,
     HttpStatusCode? code = null,
     Exception? ex = null)
   {
-    if (!string.IsNullOrWhiteSpace(message))
-    {
-      errOr.AddMessage(message, severity);
-    }
+    errOr.AddMessage(message, severity);
 
     if (code.HasValue)
     {
@@ -114,11 +111,11 @@ public static class ErrOrHelpers
   /// </summary>
   public static ErrOr<T> Set<T>(
     this ErrOr<T> errOr,
-    T? value = default,
-    string? message = null,
-    Severity severity = Severity.Info,
+    string message,
+    Severity severity,
     HttpStatusCode? code = null,
-    Exception? ex = null)
+    Exception? ex = null,
+    T? value = default)
   {
     errOr.Set(message, severity, code, ex);
 
