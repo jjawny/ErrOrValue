@@ -91,16 +91,16 @@ public static class ErrOrHelpers
       errOr.Code = code.Value;
     }
 
-    var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
-
-    if (isDevelopment && ex != null)
+    if (ex != null)
     {
-      var exceptionMessage = ex.InnerException == null ? ex.Message : ex.InnerException.Message;
+      var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
+      var exceptionMessage = isDevelopment
+        ? "Something went wrong..."
+        : ex.InnerException == null
+          ? ex.Message
+          : ex.InnerException.Message;
 
-      if (!string.IsNullOrWhiteSpace(exceptionMessage))
-      {
-        errOr.AddMessage(exceptionMessage, Severity.Error);
-      }
+      errOr.AddMessage(exceptionMessage, Severity.Error);
     }
 
     return errOr;
