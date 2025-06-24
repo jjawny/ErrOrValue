@@ -18,7 +18,7 @@ public class ErrorTests
     errOr.AddMessages(messagesToAdd);
 
     // Act
-    var errors = errOr.Errors();
+    var errors = errOr.Errors;
 
     // Assert
     Assert.Contains("Error", errors);
