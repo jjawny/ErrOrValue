@@ -7,17 +7,6 @@ namespace ErrOrValue;
 public static class ErrOrHelpers
 {
   /// <summary>
-  /// Get all error messages
-  /// </summary>
-  public static List<string> Errors(this ErrOr errOr)
-  {
-    return errOr.Messages
-      .Where(m => m.Severity == Severity.Error)
-      .Select(m => m.Message)
-      .ToList();
-  }
-
-  /// <summary>
   /// Add a message
   /// </summary>
   public static ErrOr AddMessage(this ErrOr errOr, string message, Severity severity = Severity.Info)
@@ -204,37 +193,37 @@ public static class ErrOrHelpers
   /// <summary>
   /// Debug utility to log an ErrOr as JSON to the console
   /// </summary>
-  public static void LogToConsole(this ErrOr errOr)
+  public static void LogToConsole(this ErrOr errOr, bool isIgnoreMessages = false)
   {
-    BaseLogToConsole(errOr, null);
+    BaseLogToConsole(errOr, isIgnoreMessages: isIgnoreMessages);
   }
 
   /// <summary>
   /// Debug utility to log an ErrOr as JSON to the console
   /// </summary>
-  public static void LogToConsole<T>(this ErrOr<T> errOr)
+  public static void LogToConsole<T>(this ErrOr<T> errOr, bool isIgnoreMessages = false, bool isIgnoreValue = false)
   {
-    BaseLogToConsole(errOr, errOr.Value);
+    BaseLogToConsole(errOr, errOr.Value, isIgnoreMessages: isIgnoreMessages, isIgnoreValue: isIgnoreValue);
   }
 
   /// <summary>
   /// Internal helper method to log an ErrOr as JSON to the console
   /// </summary>
-  private static void BaseLogToConsole(ErrOr errOr, object? value)
+  private static void BaseLogToConsole(ErrOr errOr, object? value = null, bool isIgnoreMessages = false, bool isIgnoreValue = false)
   {
-    var prettierObject = new Dictionary<string, object>
+    var prettifiedObject = new Dictionary<string, object>
     {
       ["IsOk"] = errOr.IsOk,
       ["Code"] = errOr.Code,
-      ["Messages"] = errOr.Messages.Select(m => new { Message = m.Message, Severity = m.Severity.GetEnumDescription() }).ToList()
     };
 
-    if (value != null)
-    {
-      prettierObject["Value"] = value;
-    }
+    if (!isIgnoreMessages)
+      prettifiedObject["Messages"] = errOr.Messages.Select(m => new { Message = m.Message, Severity = m.Severity.GetEnumDescription() }).ToList();
 
-    var json = JsonSerializer.Serialize(prettierObject, new JsonSerializerOptions() { WriteIndented = true });
+    if (!isIgnoreValue)
+      prettifiedObject["Value"] = value ?? "null";
+
+    var json = JsonSerializer.Serialize(prettifiedObject, new JsonSerializerOptions() { WriteIndented = true });
 
     Console.WriteLine(json);
   }

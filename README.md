@@ -41,16 +41,20 @@ The Best _[Errors as Values](https://go.dev/blog/errors-are-values)_ for ASP.NET
 ```
 
 ```csharp
-  var response = Find();
-
-  if (response.IsOk)
-  {
-    // You can safely read the value if everything was OK...
+  // You can quickly see if the op was successful
+  var findResponse = Find();
+  Console.Write(findResponse.IsOk)
+  
+  // ...and safely read the value
+  if (findResponse.IsOkWithValue)
     Console.Write(response.Value);
-  } else {
-    // ...and see any errors
-    Console.Write(response.Errors())
-  }
+  
+  // ...and read any errors
+  Console.Write(findResponse.Errors.Count)
+
+  // ...and easily bubble-up
+  var response = new ErrOr();
+  return response.MergeWith(findResponse);
 ```
 
 ## Why?
