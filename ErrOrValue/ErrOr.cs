@@ -5,10 +5,9 @@ namespace ErrOrValue;
 
 public class ErrOr
 {
+  public bool IsOk => (int)Code >= 200 && (int)Code <= 299 && !Messages.Any(m => m.Severity == Severity.Error);
   public HttpStatusCode Code { get; set; } = HttpStatusCode.OK;
   public List<(string Message, Severity Severity)> Messages { get; set; } = [];
-  public bool IsOk => (int)Code >= 200 && (int)Code <= 299 && !Messages.Any(m => m.Severity == Severity.Error);
-
   public IReadOnlyList<string> Errors => Messages
     .Where(m => m.Severity == Severity.Error)
     .Select(m => m.Message)
@@ -17,8 +16,7 @@ public class ErrOr
 
 public class ErrOr<T> : ErrOr
 {
-  public T? Value { get; set; }
-
   [MemberNotNullWhen(true, nameof(Value))]
   public bool IsOkWithValue => base.IsOk && Value != null;
+  public T? Value { get; set; }
 }
