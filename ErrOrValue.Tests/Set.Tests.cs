@@ -30,14 +30,18 @@ public class SetTests
     // Arrange
     Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
     var errOr = new ErrOr();
-    var exception = new Exception("Test exception");
+    var exceptionMessage = "Test exception";
+    var exception = new Exception(exceptionMessage);
 
     // Act
-    errOr.Set(ex: exception);
+    errOr.Set(
+      message: "Bad request",
+      severity: Severity.Error,
+      ex: exception);
 
     // Assert
     Assert.Single(errOr.Messages);
-    Assert.Equal("Test exception", errOr.Messages[0].Message);
+    Assert.Equal(exceptionMessage, errOr.Messages[0].Message);
     Assert.Equal(Severity.Error, errOr.Messages[0].Severity);
 
     // Cleanup
@@ -50,14 +54,18 @@ public class SetTests
     // Arrange
     Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
     var errOr = new ErrOr();
-    var exception = new Exception("Outer exception", new Exception("Inner exception"));
+    var innerExceptionMessage = "Inner exception";
+    var exception = new Exception("Outer exception", new Exception(innerExceptionMessage));
 
     // Act
-    errOr.Set(ex: exception);
+    errOr.Set(
+      message: "Bad request",
+      severity: Severity.Error,
+      ex: exception);
 
     // Assert
     Assert.Single(errOr.Messages);
-    Assert.Equal("Inner exception", errOr.Messages[0].Message);
+    Assert.Equal(innerExceptionMessage, errOr.Messages[0].Message);
     Assert.Equal(Severity.Error, errOr.Messages[0].Severity);
 
     // Cleanup
@@ -74,7 +82,7 @@ public class SetTests
     var errOr = new ErrOr<T>();
 
     // Act
-    errOr.Set(value, message, severity, code);
+    errOr.Set(message, severity, code, value: value);
 
     // Assert
     Assert.Equal(value, errOr.Value);
