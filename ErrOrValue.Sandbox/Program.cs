@@ -1,25 +1,24 @@
 ﻿using ErrOrValue;
 
-var errOr1 = new ErrOr();
-var errOr2 = new ErrOr<string>();
-var errOr3 = new ErrOr<DTO?>();
+var errOr = new ErrOr<Dto?>();
 
-errOr1.AddMessage("ℹ️", Severity.Info);
-errOr1.AddMessage("⚠️", Severity.Warning);
-errOr1.AddMessage("❗️", Severity.Error);
-errOr2.Value = "Broski 1";
-errOr3.Value = new DTO { Name = "Broski 2" };
+// Happy path
+var random = new Random();
+if (random.Next(2) == 0) // 50% chance
+  errOr.Value = new Dto { Name = "Broski" };
 
-Console.WriteLine(errOr1.IsOk);
-Console.WriteLine(errOr1.Errors.Count);
-Console.WriteLine(string.Join("\n", errOr1.Errors));
+errOr.AddMessage("ℹ️", Severity.Info);
+errOr.AddMessage("⚠️", Severity.Warning);
 
+Console.WriteLine($"Is OK? {errOr.IsOkWithValue}");
+if (errOr.IsOkWithValue)
+  Console.WriteLine($"Value? {errOr.Value.Name}");
 
-errOr1.LogToConsole();
-errOr2.LogToConsole();
-errOr3.LogToConsole();
+// Failure path
+errOr.AddMessage("❗️", Severity.Error);
+Console.WriteLine($"Is still OK? {errOr.IsOk}");
 
-public class DTO
+public class Dto
 {
   public string Name { get; set; } = null!;
 }
