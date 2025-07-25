@@ -117,7 +117,7 @@ public static class ErrOrHelpers
     Exception? ex = null,
     T? value = default)
   {
-    errOr.Set(message, severity, code, ex);
+    ((ErrOr)errOr).Set(message, severity, code, ex);
 
     if (value != null)
     {
