@@ -1,10 +1,11 @@
-![ErrOrValue](https://raw.githubusercontent.com/jjjjony/ErrOrValue/main/ErrOrValue.png)
+![ErrOrValue](https://raw.githubusercontent.com/jjawny/ErrOrValue/main/ErrOrValue.png)
 
-# ErrOrValue ❌ ✅
+# ErrOrValue ❌✅
 
-The Best _[Errors as Values](https://go.dev/blog/errors-are-values)_ for ASP.NET Projects
+The best _[Errors as Values](https://go.dev/blog/errors-are-values)_ for ASP.NET Projects
 
-## Show me an example?
+<details>
+<summary>1. Show me an example?</summary>
 
 ```csharp
   // Some method
@@ -57,6 +58,26 @@ The Best _[Errors as Values](https://go.dev/blog/errors-are-values)_ for ASP.NET
   return response.MergeWith(findResponse);
 ```
 
-## Why?
+</details>
 
-Similar packages are usually over-engineered (bloated APIs) when the concept is simple: ***Errors as Values***. This means we need a lightweight object that lets you check if the op was **OK**. OK? access the value safely, not OK? access the error(s). Tailored for ASP.NET Web APIs, these errors come in the form of messages w 'error' severity (can easily become telemetry traces or shown in UI toasts) + easily bubble-up HTTP status codes (vs losing context and just returning a 200 or 500). This package will always be a single file (excluding extension methods) that you can easily copy n modify in your own project (avoid the extra dependency). **Benefits**? perf gains by avoiding throwing exceptions in your code (this keeps exceptions for **unexpected** errors (from the framework or 3rd party libs)), forces devs to consider how to handle each error, explicit code paths for errors, faster debugging (messages act like a mini stack trace), + more!
+
+<details>
+<summary>2. Why?</summary>
+
+- Similar packages are over-engineered (heavy-weights with bloated APIs), meanwhile the concept is simple: ***Errors as Values*** (Google it).
+- All we need is a lightweight object that lets you check if the operation was successful and either access the value (type)safely or read detailed errors.
+
+</details>
+
+
+<details>
+<summary>3. Benefits?</summary>
+
+- Performance gains by avoiding throwing exceptions
+- Keeps exceptions for truely unexpected errors that should **not** be in production (from the framework or 3rd party libs)
+- Forces devs to explicitly handle each error
+- Explicit error handling = new devs grok the code faster
+- Messages acting like a mini stack trace = debug problems faster
+- Allows you to easily surface context-specific details from deep within the stack trace rather than the usual _"500 Something went wrong..."_
+
+</details>
