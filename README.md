@@ -64,8 +64,8 @@ The best _[Errors as Values](https://go.dev/blog/errors-are-values)_ for ASP.NET
 <details>
 <summary>2. Why?</summary>
 
-- Similar packages are over-engineered (heavy-weights with bloated APIs), meanwhile the concept is simple: ***Errors as Values*** (Google it).
-- All we need is a lightweight object that lets you check if the operation was successful and either access the value (type)safely or read detailed errors.
+- Similar packages are over-engineered (heavy-weights with bloated APIs), meanwhile the concept is simple: ***Errors as Values*** (Google it)
+- All we need is a lightweight object that lets you check if the operation was successful and either access the value (type)safely or read detailed errors
 
 </details>
 
