@@ -12,7 +12,7 @@
     <Authors>jawny</Authors>
     <Description>Lightweight errors as values for ASP.NET projects.</Description>
     <PackageIcon>ErrOrValue.png</PackageIcon>
-    <PackageTags>Slim,Thin,Object,Error,Errors,Value,Values,For,ASP,DotNet,Skinny</PackageTags>
+    <PackageTags>errors-as-values;error-handling;result;union-types;pattern-matching;aspnetcore;minimal-api;dotnet;lightweight</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/jjawny/ErrOrValue</PackageProjectUrl>
     <RepositoryUrl>https://github.com/jjawny/ErrOrValue</RepositoryUrl>
