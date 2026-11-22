@@ -1,83 +1,122 @@
+
+
+<div align="center">
+
+# ErrOrValue
+
 ![ErrOrValue](https://raw.githubusercontent.com/jjawny/ErrOrValue/main/ErrOrValue.png)
 
-# ErrOrValue ❌✅
+**The best [errors as values](https://go.dev/blog/errors-are-values) for ASP.NET projects**
 
-The best _[Errors as Values](https://go.dev/blog/errors-are-values)_ for ASP.NET Projects
+[Set it up](#set-it-up) · [Use it](#use-it) · [Test it](#test-it)
 
-<details>
-<summary>1. Show me an example?</summary>
+</div>
+
+## Set it up
+
+```sh
+dotnet add package ErrOrValue
+```
+> ℹ️ The latest version of ErrOrValue requires [.NET 11](https://dotnet.microsoft.com/en-us/download/dotnet/11.0).
+
+## Use it
+
+An operation returns either a `Success<T>` or an `Error`. `Success` defaults to HTTP status code 200 and `Error` defaults to HTTP status code 400.
+
+The type of the result determines success, not the message severities/codes.
+
+Below is an example for how to handle the result with more examples in the [sandbox](./ErrOrValue.Sandbox/Program.cs).
+
 
 ```csharp
-  // Some method
-  public ErrOr<bool> Find()
-  {
-    var response = new ErrOr<bool>();
+using ErrOrValue;
 
-    try
-    {
-      // Happy path
-      return response.Set(
-        message: "Successfully found it",
-        severity: Severity.Info,
-        code: HttpStatusCode.OK,
-        value: true);
+// This method returns an error or UserDto
+static ErrOr<UserDto> FindUser(int userId) => userId == 123
+  ? new Success<UserDto>(new UserDto("Chris P. Bacon"))
+  : new Error("User not found", HttpStatusCode.NotFound);
 
-      // Issues
-      return response.Set(
-        message: "Unable to find it",
-        severity: Severity.Warning,
-        code: HttpStatusCode.NotFound,
-        value: false);
-    }
-    catch (Exception ex)
-    {
-      // Exceptions
-      return response.Set(
-        message: "Something went wrong...",
-        severity: Severity.Error,
-        code: HttpStatusCode.InternalServerError,
-        ex: ex);
-    }
-  }
+// Handle the error or UserDto
+var result = FindUser(123);
+
+Console.WriteLine(result switch
+{
+  Success<UserDto> success => $"Found user '{success.Value.Name}'",
+  Error error => $"{(int)error.Code}: {error.Message}"
+});
 ```
+
+You can also check for a success/failure using the declaration pattern:
+
 
 ```csharp
-  // You can quickly see if the op was successful
-  var findResponse = Find();
-  Console.Write(findResponse.IsOk)
-  
-  // ...and safely read the value
-  if (findResponse.IsOkWithValue)
-    Console.Write(response.Value);
-  
-  // ...and read any errors
-  Console.Write(findResponse.Errors.Count)
-
-  // ...and easily bubble-up
-  var response = new ErrOr();
-  return response.MergeWith(findResponse);
+if (result is Success<T> success) { }
 ```
 
-</details>
+You can chain operations together and propagate the result directly into another result type:
+
+```csharp
+static ErrOr<bool> IsAdult(int userId) => Find(userId) switch
+{
+  Success<string> success => new Success<int>(success.Value.Age > 18),
+  Error error => error
+};
+```
+
+> ℹ️ Because you have control over your business logic, it is recommended for all methods to return an ErrOr. This forces you to handle each error scenario. Google more benefits why errors as values leads to better software.
 
 
-<details>
-<summary>2. Why?</summary>
+### ASP.NET responses
 
-- Similar packages are over-engineered (heavy-weights with bloated APIs), meanwhile the concept is simple: ***Errors as Values*** (Google it)
-- All we need is a lightweight object that lets you check if the operation was successful and either access the value (type)safely or read detailed errors
-
-</details>
+Respond from a route/endpoint using:
 
 
-<details>
-<summary>3. Benefits?</summary>
+```csharp
+// Controllers
+return result.ToApiResponse();
 
-- Performance gains by avoiding throwing exceptions
-- Keeps exceptions for truely unexpected errors that should **not** be in production (from the framework or 3rd party libs)
-- Forces devs to explicitly handle each error
-- Explicit error handling = new devs grok the code faster
-- Messages acting like a mini stack trace = debug problems faster
-- Allows you to easily surface context-specific details from deep within the stack trace rather than the usual _"500 Something went wrong..."_
+// Minimal API
+return result.ToMinimalApiResponse();
+```
 
-</details>
+### HTTP clients
+
+Convert a HTTP response into a result:
+
+```csharp
+using var httpResponse = await httpClient.GetAsync(url, cancellationToken);
+ErrOr<UserDto> result = await httpResponse.FromHttpResponse<UserDto>("External service", cancellationToken);
+
+// For responses without a JSON value, including HTTP 204:
+ErrOr resultWithoutValue = response.FromHttpResponse("External service");
+```
+
+### Migrating from v5
+
+.NET 11 (C# 15) has introduced [union types](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/union). Version 6 of ErrOrValue is now built on top of this new feature and has breaking changes.
+
+| v5 | v6 |
+| --- | --- |
+| .NET 9 | .NET 11 |
+| `new ErrOr<T> { Value = value }` | `new Success<T>(value)` |
+| `new ErrOr()` | `new Success()` or `new Error(message)` |
+| `IsOk` / `IsOkWithValue` | Use native switch statements/expressions or declaration patterns |
+| Mutable `Value`, `Code`, `Messages` | Now using [records](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/types/records); add during creation and use `with` expressions for updates |
+| `AddMessage` / `AddMessages` | Now using records |
+| `Set(...)` | Return an explicit `success` or `error` |
+| `MergeWith(...)` | Pattern match the result and map to a new result type |
+| `Errors` | Pattern match the `Error` as an error, then read the messages |
+| `errOr.FromHttpResponse<T>(response, service)` | `httpResponse.FromHttpResponse<T>(service)` |
+| `ToApiResponse(value)` / `ToMinimalApiResponse(value)` | Put the value in `Success<T>` first |
+| `LogToConsole()` | Pattern match the cases and use your choice of logger |
+
+
+## Test it
+
+Test the [sandbox](./ErrOrValue.Sandbox/Program.cs) using the commands below to find a user given their ID.
+
+```sh
+cd ErrOrValue.Sandbox
+dotnet run -- 123 # example for success
+dotnet run -- 000 # example for error
+```
