@@ -12,7 +12,7 @@
     <Authors>Johnny Madigan</Authors>
     <Description>Lightweight errors as values for ASP.NET projects.</Description>
     <PackageIcon>ErrOrValue.png</PackageIcon>
-    <PackageTags>errors-as-values;error-handling;result;union-types;pattern-matching;aspnetcore;minimal-api;dotnet;lightweight</PackageTags>
+    <PackageTags>errors-as-values;error-handling;result;union-types;pattern-matching;aspnetcore;minimal-api;dotnet;lightweight;type-safety</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/jjawny/ErrOrValue</PackageProjectUrl>
     <RepositoryUrl>https://github.com/jjawny/ErrOrValue</RepositoryUrl>
