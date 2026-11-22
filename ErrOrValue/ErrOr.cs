@@ -1,22 +1,24 @@
-﻿using System.Diagnostics.CodeAnalysis;
 using System.Net;
 
 namespace ErrOrValue;
 
-public class ErrOr
+/// <summary>An operation that either succeeds without a value or fails.</summary>
+public union ErrOr(Success, Error);
+
+/// <summary>An operation that either succeeds with a value or fails.</summary>
+public union ErrOr<T>(Success<T>, Error);
+
+public sealed record Success(HttpStatusCode Code = HttpStatusCode.OK)
 {
-  public bool IsOk => !Messages.Any(m => m.Severity == Severity.Error);
-  public HttpStatusCode Code { get; set; } = HttpStatusCode.OK;
-  public List<(string Message, Severity Severity)> Messages { get; set; } = [];
-  public IReadOnlyList<string> Errors => Messages
-    .Where(m => m.Severity == Severity.Error)
-    .Select(m => m.Message)
-    .ToList();
+  public IReadOnlyList<(string Message, Severity Severity)> Messages { get; init; } = [];
 }
 
-public class ErrOr<T> : ErrOr
+public sealed record Success<T>(T Value, HttpStatusCode Code = HttpStatusCode.OK)
 {
-  [MemberNotNullWhen(true, nameof(Value))]
-  public bool IsOkWithValue => base.IsOk && Value != null;
-  public T? Value { get; set; }
+  public IReadOnlyList<(string Message, Severity Severity)> Messages { get; init; } = [];
+}
+
+public sealed record Error(string Message, HttpStatusCode Code = HttpStatusCode.BadRequest)
+{
+  public IReadOnlyList<(string Message, Severity Severity)> Messages { get; init; } = [];
 }

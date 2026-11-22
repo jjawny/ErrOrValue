@@ -1,16 +1,16 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net11.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup>
     <PackageId>ErrOrValue</PackageId>
-    <Version>5.0.1</Version>
+    <Version>6.0.0</Version>
     <Authors>Johnny Madigan</Authors>
-    <Description>A slim object with errors as values for ASP.NET projects</Description>
+    <Description>Lightweight errors as values for ASP.NET projects.</Description>
     <PackageIcon>ErrOrValue.png</PackageIcon>
     <PackageTags>Slim,Thin,Object,Error,Errors,Value,Values,For,ASP,DotNet,Skinny</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -19,12 +19,12 @@
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <None Include="../ErrOrValue.png" Pack="true" PackagePath="" />
     <None Include="../README.md" Pack="true" PackagePath="" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>

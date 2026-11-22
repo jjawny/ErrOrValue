@@ -1,255 +1,88 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ErrOrValue;
 
 public static class ErrOrHelpers
 {
-  /// <summary>
-  /// Add a message
-  /// </summary>
-  public static ErrOr AddMessage(this ErrOr errOr, string message, Severity severity = Severity.Info)
+  /// <summary>Maps an HTTP status to a success or error without reading its body.</summary>
+  public static ErrOr FromHttpResponse(this HttpResponseMessage response, string externalServiceName) =>
+    response.IsSuccessStatusCode
+      ? new Success(response.StatusCode)
+      : HttpError(response, externalServiceName);
+
+  /// <summary>Reads a successful JSON response; error bodies aren't deserialized as T.</summary>
+  public static async Task<ErrOr<T>> FromHttpResponse<T>(
+    this HttpResponseMessage response,
+    string externalServiceName,
+    CancellationToken cancellationToken = default)
   {
-    errOr.Messages.Add((message, severity));
+    if (!response.IsSuccessStatusCode)
+      return HttpError(response, externalServiceName);
 
-    return errOr;
-  }
-
-  /// <summary>
-  /// Add many messages
-  /// </summary>
-  public static ErrOr AddMessages(this ErrOr errOr, IEnumerable<(string Message, Severity Severity)> messages)
-  {
-    errOr.Messages.AddRange(messages);
-
-    return errOr;
-  }
-
-  /// <summary>
-  /// Merge the Status Code and Messages from another ErrOr into this ErrOr
-  /// </summary>
-  public static ErrOr MergeWith(this ErrOr errOr, ErrOr otherErrOr)
-  {
-    errOr.Code = otherErrOr.Code;
-    errOr.Messages.AddRange(otherErrOr.Messages);
-
-    return errOr;
-  }
-
-  /// <summary>
-  /// Merge the Status Code, Messages, and Value (if types match) from another ErrOr into this ErrOr
-  /// </summary>
-  public static ErrOr<TTarget> MergeWith<TTarget, TSource>(this ErrOr<TTarget> errOr, ErrOr<TSource> otherErrOr)
-  {
-    // Merge base properties
-    ((ErrOr)errOr).MergeWith(otherErrOr);
-
-    // If the types match, try to update the value
-    if (otherErrOr is ErrOr<TTarget> sameTypeErrOr && sameTypeErrOr.Value != null)
+    try
     {
-      errOr.Value = sameTypeErrOr.Value;
+      var value = await response.Content.ReadFromJsonAsync<T>(cancellationToken);
+      return value is null
+        ? new Error($"Empty JSON value from {externalServiceName}", HttpStatusCode.BadGateway)
+        : new Success<T>(value, response.StatusCode);
     }
-
-    return errOr;
-  }
-
-  /// <summary>
-  /// Merge the Status Code, Messages from another ErrOr into this ErrOr
-  /// </summary>
-  public static ErrOr MergeWith<TSource>(this ErrOr errOr, ErrOr<TSource> otherErrOr)
-  {
-    errOr.Code = otherErrOr.Code;
-    errOr.Messages.AddRange(otherErrOr.Messages);
-    return errOr;
-  }
-
-  /// <summary>
-  /// Merge the Status Code, Messages from another ErrOr into this ErrOr
-  /// </summary>
-  public static ErrOr<TTarget> MergeWith<TTarget>(this ErrOr<TTarget> errOr, ErrOr otherErrOr)
-  {
-    // Merge base properties
-    ((ErrOr)errOr).MergeWith(otherErrOr);
-    return errOr;
-  }
-
-  /// <summary>
-  /// Set all values at once
-  /// </summary>
-  public static ErrOr Set(
-    this ErrOr errOr,
-    string message,
-    Severity severity,
-    HttpStatusCode? code = null,
-    Exception? ex = null)
-  {
-    errOr.AddMessage(message, severity);
-
-    if (code.HasValue)
+    catch (JsonException)
     {
-      errOr.Code = code.Value;
+      return new Error($"Invalid JSON from {externalServiceName}", HttpStatusCode.BadGateway);
     }
-
-    if (ex != null)
-    {
-      var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
-      var exceptionMessage = isDevelopment
-        ? "Something went wrong..."
-        : ex.InnerException == null
-          ? ex.Message
-          : ex.InnerException.Message;
-
-      errOr.AddMessage(exceptionMessage, Severity.Error);
-    }
-
-    return errOr;
   }
 
-  /// <summary>
-  /// Set all values at once
-  /// </summary>
-  public static ErrOr<T> Set<T>(
-    this ErrOr<T> errOr,
-    string message,
-    Severity severity,
-    HttpStatusCode? code = null,
-    Exception? ex = null,
-    T? value = default)
+  public static IActionResult ToApiResponse(this ErrOr result)
   {
-    ((ErrOr)errOr).Set(message, severity, code, ex);
-
-    if (value != null)
-    {
-      errOr.Value = value;
-    }
-
-    return errOr;
+    var (body, code) = GetResponse(result);
+    return new JsonResult(body) { StatusCode = (int)code };
   }
 
-  /// <summary>
-  /// Map a HTTP response to an ErrOr 
-  /// </summary>
-  public static ErrOr FromHttpResponse(this ErrOr errOr, HttpResponseMessage httpResponse, string externalServiceName)
+  public static IActionResult ToApiResponse<T>(this ErrOr<T> result)
   {
-    errOr.Code = httpResponse.StatusCode;
-
-    if (!httpResponse.IsSuccessStatusCode)
-    {
-      errOr.AddMessage($"Error from {externalServiceName}: {httpResponse.ReasonPhrase}", Severity.Error);
-    }
-
-    return errOr;
+    var (body, code) = GetResponse(result);
+    return new JsonResult(body) { StatusCode = (int)code };
   }
 
-  /// <summary>
-  /// Map a HTTP response to an ErrOr 
-  /// </summary>
-  public static async Task<ErrOr<T>> FromHttpResponse<T>(this ErrOr<T> errOr, HttpResponseMessage httpResponse, string externalServiceName)
+  public static IResult ToMinimalApiResponse(this ErrOr result)
   {
-    ((ErrOr)errOr).FromHttpResponse(httpResponse, externalServiceName);
-
-    if (httpResponse.Content != null)
-    {
-      errOr.Value = await httpResponse.Content.ReadFromJsonAsync<T>();
-    }
-
-    return errOr;
+    var (body, code) = GetResponse(result);
+    return Results.Json(body, statusCode: (int)code);
   }
 
-  /// <summary>
-  /// Map an ErrOr to an HTTP response for MVC controllers
-  /// </summary>
-  public static Microsoft.AspNetCore.Mvc.IActionResult ToApiResponse(this ErrOr errOr, object? value = null)
+  public static IResult ToMinimalApiResponse<T>(this ErrOr<T> result)
   {
-    var body = GetApiResponsePayload(errOr, value);
-    var res = new Microsoft.AspNetCore.Mvc.JsonResult(body) { StatusCode = (int)errOr.Code };
-    return res;
+    var (body, code) = GetResponse(result);
+    return Results.Json(body, statusCode: (int)code);
   }
 
-  /// <summary>
-  /// Map an ErrOr to an HTTP response for MVC controllers
-  /// </summary>
-  public static Microsoft.AspNetCore.Mvc.IActionResult ToApiResponse<T>(this ErrOr<T> errOr) => errOr.ToApiResponse(errOr.Value);
+  private static Error HttpError(HttpResponseMessage response, string service) =>
+    new($"Error from {service}: {response.ReasonPhrase}", response.StatusCode);
 
-  /// <summary>
-  /// Map an ErrOr to an HTTP response for minimal APIs
-  /// </summary>
-  public static Microsoft.AspNetCore.Http.IResult ToMinimalApiResponse(this ErrOr errOr, object? value = null)
+  private static (object Body, HttpStatusCode Code) GetResponse(ErrOr result) => result switch
   {
-    var body = GetApiResponsePayload(errOr, value);
-    var res = Microsoft.AspNetCore.Http.Results.Json(body, statusCode: (int)errOr.Code);
-    return res;
-  }
+    Success success => (Payload(success.Messages), success.Code),
+    Error error => ErrorResponse(error),
+    null => throw new InvalidOperationException("ErrOr has no outcome. Return a Success or Error case."),
+  };
 
-  /// <summary>
-  /// Map an ErrOr to an HTTP response for minimal APIs
-  /// </summary>
-  public static Microsoft.AspNetCore.Http.IResult ToMinimalApiResponse<T>(this ErrOr<T> errOr) => errOr.ToMinimalApiResponse(errOr.Value);
-
-  /// <summary>
-  /// Debug utility to log an ErrOr as JSON to the console
-  /// </summary>
-  public static void LogToConsole(this ErrOr errOr, bool isIgnoreMessages = false)
+  private static (object Body, HttpStatusCode Code) GetResponse<T>(ErrOr<T> result) => result switch
   {
-    BaseLogToConsole(errOr, isIgnoreMessages: isIgnoreMessages);
-  }
+    Success<T> success => (new { value = success.Value, messages = JsonMessages(success.Messages) }, success.Code),
+    Error error => ErrorResponse(error),
+    null => throw new InvalidOperationException("ErrOr has no outcome. Return a Success<T> or Error case."),
+  };
 
-  /// <summary>
-  /// Debug utility to log an ErrOr as JSON to the console
-  /// </summary>
-  public static void LogToConsole<T>(this ErrOr<T> errOr, bool isIgnoreMessages = false, bool isIgnoreValue = false)
-  {
-    BaseLogToConsole(errOr, errOr.Value, isIgnoreMessages: isIgnoreMessages, isIgnoreValue: isIgnoreValue);
-  }
+  private static (object Body, HttpStatusCode Code) ErrorResponse(Error error) =>
+    (Payload([.. error.Messages, (error.Message, Severity.Error)]), error.Code);
 
-  /// <summary>
-  /// Internal helper method to log an ErrOr as JSON to the console
-  /// </summary>
-  private static void BaseLogToConsole(ErrOr errOr, object? value = null, bool isIgnoreMessages = false, bool isIgnoreValue = false)
-  {
-    var prettifiedObject = new Dictionary<string, object>
-    {
-      ["IsOk"] = errOr.IsOk,
-      ["Code"] = errOr.Code,
-    };
+  private static object Payload(IReadOnlyList<(string Message, Severity Severity)> messages) =>
+    new { messages = JsonMessages(messages) };
 
-    if (!isIgnoreMessages)
-      prettifiedObject["Messages"] = errOr.Messages.Select(m => new { Message = m.Message, Severity = m.Severity.GetEnumDescription() }).ToList();
-
-    if (!isIgnoreValue)
-      prettifiedObject["Value"] = value ?? "null";
-
-    var json = JsonSerializer.Serialize(prettifiedObject, new JsonSerializerOptions() { WriteIndented = true });
-
-    Console.WriteLine(json);
-  }
-
-  /// <summary>
-  /// Get the description attribute of an enum value or fallback to the enum as a string
-  /// </summary>
-  private static string GetEnumDescription(this Enum enumValue)
-  {
-    var field = enumValue.GetType().GetField(enumValue.ToString());
-
-    if (field != null && Attribute.GetCustomAttribute(field, typeof(System.ComponentModel.DescriptionAttribute)) is System.ComponentModel.DescriptionAttribute attribute)
-    {
-      return attribute.Description;
-    }
-
-    return enumValue.ToString();
-  }
-
-  /// <summary>
-  /// Creates a standardized response payload from an ErrOr
-  /// </summary>
-  private static object GetApiResponsePayload(ErrOr errOr, object? value = null)
-  {
-    // Convert tuples to named properties for JSON serialization
-    var jsonSerializableMessages = errOr.Messages.Select(m => new { message = m.Message, severity = m.Severity.GetEnumDescription() }).ToList();
-
-    return value != null
-      ? new { value = value, messages = jsonSerializableMessages }
-      : new { messages = jsonSerializableMessages };
-  }
+  private static object JsonMessages(IReadOnlyList<(string Message, Severity Severity)> messages) =>
+    messages.Select(m => new { message = m.Message, severity = m.Severity.ToString().ToLowerInvariant() }).ToArray();
 }
