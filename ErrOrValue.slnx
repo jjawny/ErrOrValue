@@ -1,0 +1,10 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="ErrOrValue.Sandbox/ErrOrValue.Sandbox.csproj" />
+  <Project Path="ErrOrValue.Tests/ErrOrValue.Tests.csproj" />
+  <Project Path="ErrOrValue/ErrOrValue.csproj" />
+</Solution>
