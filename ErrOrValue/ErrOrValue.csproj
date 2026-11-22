@@ -9,7 +9,7 @@
   <PropertyGroup>
     <PackageId>ErrOrValue</PackageId>
     <Version>6.0.1</Version>
-    <Authors>jawny</Authors>
+    <Authors>Johnny Madigan</Authors>
     <Description>Lightweight errors as values for ASP.NET projects.</Description>
     <PackageIcon>ErrOrValue.png</PackageIcon>
     <PackageTags>errors-as-values;error-handling;result;union-types;pattern-matching;aspnetcore;minimal-api;dotnet;lightweight</PackageTags>
