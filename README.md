@@ -17,16 +17,16 @@
 ```sh
 dotnet add package ErrOrValue
 ```
+
 > ℹ️ The latest version of ErrOrValue requires [.NET 11](https://dotnet.microsoft.com/en-us/download/dotnet/11.0).
 
 ## Use it
 
-An operation returns either a `Success<T>` or an `Error`. `Success` defaults to HTTP status code 200 and `Error` defaults to HTTP status code 400.
+An operation returns either a `Success<T>` or an `Error`. Operations without a return value use `Success`. Success cases default to HTTP status code 200, and errors default to HTTP status code 400.
 
-The type of the result determines success, not the message severities/codes.
+The type of the result determines whether the operation was successful. Message severities and HTTP status codes do not change the case.
 
-Below is an example for how to handle the result with more examples in the [sandbox](./ErrOrValue.Sandbox/Program.cs).
-
+The following example shows how to handle a result. Find more examples in the [sandbox](https://github.com/jjawny/ErrOrValue/blob/main/ErrOrValue.Sandbox/Program.cs).
 
 ```csharp
 using ErrOrValue;
@@ -44,32 +44,28 @@ Console.WriteLine(result switch
   Success<UserDto> success => $"Found user '{success.Value.Name}'",
   Error error => $"{(int)error.Code}: {error.Message}"
 });
+
 ```
 
-You can also check for a success/failure using the declaration pattern:
-
+You can also check for success or failure using the declaration pattern:
 
 ```csharp
 if (result is Success<T> success) { }
 ```
 
-You can chain operations together and propagate the result directly into another result type:
+You can chain operations together. Transform a success value to another type or propagate errors directly:
 
 ```csharp
-static ErrOr<bool> IsAdult(int userId) => Find(userId) switch
+static ErrOr<bool> IsAdult(int userId) => FindUser(userId) switch
 {
-  Success<string> success => new Success<int>(success.Value.Age > 18),
+  Success<UserDto> success => new Success<bool>(success.Value.Age >= 18),
   Error error => error
 };
 ```
 
-> ℹ️ Because you have control over your business logic, it is recommended for all methods to return an ErrOr. This forces you to handle each error scenario. Google more benefits why errors as values leads to better software.
-
-
 ### ASP.NET responses
 
-Respond from a route/endpoint using:
-
+Return a response from a controller or minimal API endpoint:
 
 ```csharp
 // Controllers
@@ -81,14 +77,14 @@ return result.ToMinimalApiResponse();
 
 ### HTTP clients
 
-Convert a HTTP response into a result:
+Convert an HTTP response into a result:
 
 ```csharp
 using var httpResponse = await httpClient.GetAsync(url, cancellationToken);
 ErrOr<UserDto> result = await httpResponse.FromHttpResponse<UserDto>("External service", cancellationToken);
 
 // For responses without a JSON value, including HTTP 204:
-ErrOr resultWithoutValue = response.FromHttpResponse("External service");
+ErrOr resultWithoutValue = httpResponse.FromHttpResponse("External service");
 ```
 
 ### Migrating from v5
@@ -101,22 +97,21 @@ ErrOr resultWithoutValue = response.FromHttpResponse("External service");
 | `new ErrOr<T> { Value = value }` | `new Success<T>(value)` |
 | `new ErrOr()` | `new Success()` or `new Error(message)` |
 | `IsOk` / `IsOkWithValue` | Use native switch statements/expressions or declaration patterns |
-| Mutable `Value`, `Code`, `Messages` | Now using [records](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/types/records); add during creation and use `with` expressions for updates |
-| `AddMessage` / `AddMessages` | Now using records |
-| `Set(...)` | Return an explicit `success` or `error` |
+| Mutable `Value`, `Code`, `Messages` | Now using [records](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/types/records); initialize properties during creation and use `with` expressions for updates |
+| `AddMessage` / `AddMessages` | Initialize the `Messages` during creation |
+| `Set(...)` | Return an explicit `Success`, `Success<T>`, or `Error` case |
 | `MergeWith(...)` | Pattern match the result and map to a new result type |
-| `Errors` | Pattern match the `Error` as an error, then read the messages |
+| `Errors` | Pattern match the `Error` case, then read the messages |
 | `errOr.FromHttpResponse<T>(response, service)` | `httpResponse.FromHttpResponse<T>(service)` |
 | `ToApiResponse(value)` / `ToMinimalApiResponse(value)` | Put the value in `Success<T>` first |
 | `LogToConsole()` | Pattern match the cases and use your choice of logger |
 
-
 ## Test it
 
-Test the [sandbox](./ErrOrValue.Sandbox/Program.cs) using the commands below to find a user given their ID.
+Test the [sandbox](https://github.com/jjawny/ErrOrValue/blob/main/ErrOrValue.Sandbox/Program.cs) using the commands below to find a user given their ID.
 
 ```sh
 cd ErrOrValue.Sandbox
-dotnet run -- 123 # example for success
-dotnet run -- 000 # example for error
+dotnet run -- 123 # Success example
+dotnet run -- 000 # Error example
 ```

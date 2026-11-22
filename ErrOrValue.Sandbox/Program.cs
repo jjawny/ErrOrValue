@@ -3,7 +3,7 @@ using ErrOrValue;
 
 var userId = 123;
 
-#region Setup example
+#region Example setup
 
 if (args.Length > 1 || (args.Length == 1 && !int.TryParse(args[0], out userId)))
 {
@@ -20,11 +20,11 @@ var result = FindUser(userId);
 // 1. Use if/else blocks to check the type with 'is'.
 if (result is Error error)
 {
-    Console.WriteLine($"{(int)error.Code}: {error.Message}");
+  Console.WriteLine($"{(int)error.Code}: {error.Message}");
 }
 else if (result is Success<UserDto> success)
 {
-    Console.WriteLine($"Found user '{success.Value.Name}'");
+  Console.WriteLine($"Found user '{success.Value.Name}'");
 }
 
 // 2. Use a switch statement to check the type with a case.
@@ -46,7 +46,7 @@ var message = result switch
 };
 Console.WriteLine(message);
 
-#region Setup example
+#region Example setup
 
 static ErrOr<UserDto> FindUser(int userId) => userId == 123
   ? new Success<UserDto>(new UserDto("Chris P. Bacon"))
