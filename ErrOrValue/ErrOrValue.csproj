@@ -9,13 +9,13 @@
   <PropertyGroup>
     <PackageId>ErrOrValue</PackageId>
     <Version>6.0.0</Version>
-    <Authors>Johnny Madigan</Authors>
+    <Authors>jawny</Authors>
     <Description>Lightweight errors as values for ASP.NET projects.</Description>
     <PackageIcon>ErrOrValue.png</PackageIcon>
     <PackageTags>Slim,Thin,Object,Error,Errors,Value,Values,For,ASP,DotNet,Skinny</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/jjjjony/ErrOrValue</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/jjjjony/ErrOrValue</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/jjawny/ErrOrValue</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/jjawny/ErrOrValue</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
